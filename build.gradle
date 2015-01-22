@@ -1,0 +1,56 @@
+apply plugin: 'groovy'
+apply plugin:'application'
+
+mainClassName = "com.github.jlgrock.Main"
+
+def confDir = new File("$buildDir/install/${project.name}/conf")
+
+task copyConfFiles(type: Copy) {
+    from('src/main/resources')
+    into confDir
+    include('**/*.properties') // your configuration files
+}
+
+processResources.exclude('**/*.properties')
+[distTar, distZip].each { it.dependsOn copyConfFiles }
+
+dependencies {
+
+    compile (
+            [group: 'org.slf4j', name: 'slf4j-api', version: '1.7.10'], // Logging API
+            [group: 'ch.qos.logback', name: 'logback-classic', version: '1.1.2'], // Logging settings
+            [group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.3.9'], // to use groovy
+            [group: 'org.eclipse.jgit', name: 'org.eclipse.jgit', version: '3.6.1.201501031845-r'], // to pull/access a git repository
+            [group: 'com.sun.mail', name: 'javax.mail', version: '1.5.2'], // to email the results
+            [group: 'javax.mail', name: 'javax.mail-api', version: '1.5.2'], // to email the results
+            [group: 'org.springframework.boot', name:'spring-boot-starter', version:'1.2.1.RELEASE'], // Spring config and IoC
+            [group: 'org.apache.commons', name: 'commons-lang3', version: '3.3.2'], //used for regex escape chars
+    )
+
+    testCompile (
+            [group: 'org.springframework.boot', name: 'spring-boot-starter-test', version:'1.2.1.RELEASE'], // Spring Config and IoC testing
+            [group: 'org.spockframework', name: 'spock-core', version: '0.7-groovy-2.0'], // Spock testing
+            [group: 'org.hamcrest', name: 'hamcrest-core', version: '1.3'], //allows for using of hamcrest matchers
+            [group: 'cglib', name: 'cglib-nodep', version: '2.2.2'], // allows mocking of classes (in addition to interfaces). 2.2.2 is tied to 0.7 of spock
+            [group: 'org.objenesis', name: 'objenesis', version: '1.2'], // allows mocking final classes or classes without default constructor (together with CGLIB). 1.2 is tied to 0.7 of spock
+            [group: 'org.jvnet.mock-javamail', name: 'mock-javamail', version: '1.9'], //putting this on the classpath will send to an in-memory mailbox, rather than the real thing
+    )
+
+}
+
+startScripts {
+    classpath += files('src/dist/XxxAPlaceHolderForAConfigxxX')
+    doLast {
+        def windowsScriptFile = file getWindowsScript()
+        def unixScriptFile    = file getUnixScript()
+        windowsScriptFile.text = windowsScriptFile.text.replace('%APP_HOME%\\lib\\XxxAPlaceHolderForAConfigxxX', '%APP_HOME%\\conf')
+        unixScriptFile.text  = unixScriptFile.text.replace('$APP_HOME/lib/XxxAPlaceHolderForAConfigxxX', '$APP_HOME/conf')
+    }
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        url "http://repo.jenkins-ci.org/releases/"
+    }
+}
