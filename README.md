@@ -3,7 +3,7 @@ A simple tool to scan new git logs for a regular expression.  This is great for 
 
 ## How to install:
 (This should be better in the future...)
-* Run `gradle distZip distTar`
+* Run `gradle clean installApp distZip distTar`
 * Move the package from the `/build' directory to the appropriate system (local or server based)
 * extract it
 * Edit the file at location `APP_DIR/conf/application.properties` with the properties that make sense for your repository
