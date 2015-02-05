@@ -3,17 +3,6 @@ apply plugin:'application'
 
 mainClassName = "com.github.jlgrock.Main"
 
-def confDir = new File("$buildDir/install/${project.name}/conf")
-
-task copyConfFiles(type: Copy) {
-    from('src/main/resources')
-    into confDir
-    include('**/*.properties') // your configuration files
-}
-
-processResources.exclude('**/*.properties')
-[distTar, distZip].each { it.dependsOn copyConfFiles }
-
 dependencies {
 
     compile (

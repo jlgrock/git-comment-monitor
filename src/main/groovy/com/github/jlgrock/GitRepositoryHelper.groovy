@@ -1,5 +1,4 @@
 package com.github.jlgrock
-
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.api.PullResult
 import org.eclipse.jgit.lib.Repository
@@ -10,8 +9,6 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
-
-import java.nio.file.Paths
 
 @Component
 class GitRepositoryHelper {
@@ -50,8 +47,8 @@ class GitRepositoryHelper {
                 .setDirectory(f)
                 .setBranch("master")
                 .setBare(false)
-                .setRemote("origin").
-                setNoCheckout(false)
+                .setRemote("origin")
+                .setNoCheckout(false)
                 .call()
         try {
             // Note: the call() returns an opened repository already which needs to be closed to avoid file handle leaks!
